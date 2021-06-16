@@ -1,8 +1,7 @@
+package Tetris;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.event.*;
-import java.util.*;
 
 public class TetrisEx extends JFrame 
 {
@@ -14,19 +13,20 @@ public class TetrisEx extends JFrame
    static int blocksize = 20;
    
    int End = 0;
-   int random = 0 , random2 = (int)(Math.random()*7);
+   int random = 0;
+   int random2 = (int)(Math.random()*7);	//7가지모양의 블럭중 랜덤으로 생성
    
-   int score =0;
+   int score = 0; //점수 초기화
    
-   int wid=100;
-   int hgt= 0;
-   int rotation = 0;
+   int wid=100;	//가로
+   int hgt= 0;	//세로
+   int rotation = 0;	// 블럭 방향값
    
    boolean limit = false;
    
    int curX[]= new int[4], curY[] = new int [4]; // 블록들의 좌표 저장
    
-   int blocks[][][][]  = 
+   int blocks[][][][]  = 	//블록모양
       {
          {
             //■
@@ -226,7 +226,8 @@ public class TetrisEx extends JFrame
          }
    };
    
-   int[][] gameboard = {{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+   int[][] gameboard = {	//게임맵
+		   			 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -254,16 +255,17 @@ public class TetrisEx extends JFrame
       
    TetrisEx(){
       setTitle("테트리스");
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setLayout(null);
-      TP.setSize(720,600);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프로세스종료
+      setLayout(null);	//레이아웃 관리자를 사용하지 않음
+      TP.setSize(700,700);	//패널 사이즈 700*700
       
-      add(TP);
+      add(TP);	//패널추가
       
-      th = new TetrisThread();
+      th = new TetrisThread();	//테트리스 스레드 생성
       
       // JDialog 
-      JD.setTitle("점수");
+      
+      //JD.setTitle("점수");
       JD.setSize(250,190);
       JD.setLayout(new FlowLayout(FlowLayout.CENTER, 150, 30));
       
@@ -300,7 +302,7 @@ public class TetrisEx extends JFrame
          }
       });
       
-      TP.setBackground(Color.WHITE);
+      TP.setBackground(Color.WHITE);	//테트리스 패널 백그라운드 색상 흰색
       setSize(530,520);
       setVisible(true);
 
@@ -318,7 +320,8 @@ public class TetrisEx extends JFrame
    
    
    
-   class TetrisPanel extends JPanel{
+   class TetrisPanel extends JPanel
+   {
       public void paintComponent(Graphics g){
          
          int cnt = 0 , cnt2 = 0;
@@ -429,6 +432,7 @@ public class TetrisEx extends JFrame
               }
            }
       }
+      
       
       // 떨어지던 블록이 벽이 되는지 검사
       // 벽이 되면 wid=120, hgt=0 으로 블록 초기화, rotation도 초기화 
@@ -553,7 +557,8 @@ public class TetrisEx extends JFrame
              
           
           
-          if(chk == 1){ // chk = 1(다음 회전한 도형의 위치가 벽과 중복되면)면 wid(가로)로 30이동
+          if(chk == 1)// chk = 1(다음 회전한 도형의 위치가 벽과 중복되면)면 wid(가로)로 30이동
+          { 
              wid += blocksize;
              rotation++;
              rotation = rotation%4;
@@ -575,7 +580,8 @@ public class TetrisEx extends JFrame
           
       }
       
-      public void makeBorder(Graphics g){
+      public void makeBorder(Graphics g)
+      {
          g.setColor(Color.GRAY);
          
          g.draw3DRect(28, 70, 5, 375,true); // 기둥
@@ -584,7 +590,8 @@ public class TetrisEx extends JFrame
          g.draw3DRect(15, 65, 270, 5, true); // 천장
       }
       
-      void down(){
+      void down()
+      {
          hgt +=blocksize;
          TP.repaint();
       }
@@ -615,22 +622,50 @@ public class TetrisEx extends JFrame
       }
    }
    
-   class TetrisThread extends Thread{
+   class TetrisThread extends Thread
+   {
       TetrisPanel TP = new TetrisPanel();
-      public void run(){
-         while(true){
+      public void run()
+      {
+    	  /*
+    	   * 
+    	   * 점수에 따라 블록이 떨어지는 속도가 빨라지도록 수정 
+    	   */
+         while(true)
+         {
             try{
-               sleep(500);
-               if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
-                  TP.down();
+            	if(score>=200)
+            	{
+            		sleep(500);
+            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
+                        TP.down();
+            	}
+            	else if(score>=500)
+            	{
+            		sleep(500);
+            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
+                        TP.down();
+            	}
+            	else
+            	{
+            		sleep(1000);
+            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
+                        TP.down();
+            	}
+               
             }catch(InterruptedException e){
                return;
             }
+            
          }
       }
    }
-   
-   public static void main(String[] args){
-      new TetrisEx();
-   }
+}
+
+public class Main
+{
+	public static void main(String[] args)
+	   {
+	      new TetrisEx();
+	   }
 }
