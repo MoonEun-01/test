@@ -12,7 +12,7 @@ public class TetrisEx extends JFrame
    static int blocksize = 20;
    
    int End = 0;
-   int random = 0;
+   int random = 0;	//  랜던값 저장하여 사용할 변수
    int random2 = (int)(Math.random()*7);	//7가지모양의 블럭중 랜덤으로 생성
    
    int score = 0; //점수 초기화
@@ -264,7 +264,7 @@ public class TetrisEx extends JFrame
       
       // JDialog 
       
-      //JD.setTitle("점수");
+      JD.setTitle("점수");
       JD.setSize(250,190);
       JD.setLayout(new FlowLayout(FlowLayout.CENTER, 150, 30));
       
@@ -287,6 +287,16 @@ public class TetrisEx extends JFrame
                   TP.moveLeft();
                if(keyCode == KeyEvent.VK_RIGHT)
                   TP.moveRight();
+               /*
+                * 추가한 부분
+                * 스페이스바를 눌렀을 경우
+                * 아래로 바로 내려가서 붙이도록 함
+                */
+               if(keyCode == KeyEvent.VK_SPACE)
+               {
+            	   TP.moveHardDrop();
+               }
+               
             }
          });
       
@@ -301,7 +311,10 @@ public class TetrisEx extends JFrame
          }
       });
       
-      TP.setBackground(Color.WHITE);	//테트리스 패널 백그라운드 색상 흰색
+      /*
+       * 백그라운드 색상 흰색에서 검정으로 수정
+       */
+      TP.setBackground(Color.BLACK);
       setSize(530,520);
       setVisible(true);
 
@@ -335,7 +348,7 @@ public class TetrisEx extends JFrame
          TP.add(lbl);
          lbl.setText(Integer.toString(score*100));
          
-         g.setColor(Color.ORANGE); // 새로 떨어지는 블럭,미리보기  블럭 색깔
+         g.setColor(Color.ORANGE); // 새로 떨어지는 블럭, 미리보기 블럭 색깔
          
          // 다음 나올 도형 출력
          blockLookAhead(g);
@@ -379,15 +392,15 @@ public class TetrisEx extends JFrame
                 
                
                 //lbl.setLocation(50,50);
-                JD.add(lbl);
-                JD.add(btn);
+                JD.add(lbl);	//JDialog에 [최종 점수] 글자 레이블 붙임
+                JD.add(btn);	//JDialog에 replay?버튼 붙임
                
                 //btn.setLocation(50,30);
                 JD.setVisible(true);
              }
       }
       
-      public void removeBlock(int cnt, int cnt2, Graphics g){
+      public void removeBlock(int cnt, int cnt2, Graphics g){	
          for(int y =0;y<19;y++){
              for(int x =1; x<12 ; x++){
                 if(gameboard[y][x] == 1){
@@ -408,7 +421,7 @@ public class TetrisEx extends JFrame
           }
       }
       
-      public void makeBlock(Graphics g){
+      public void makeBlock(Graphics g){	//생성될 블록
          g.setColor(Color.GRAY); 
           for(int y=0; y<19;y++){
              for(int x=1; x<12; x++){
@@ -419,7 +432,7 @@ public class TetrisEx extends JFrame
           }
       }
       
-      public void blockDown(int cnt, Graphics g){
+      public void blockDown(int cnt, Graphics g){	//자동으로 블록이 아래로 떨어짐
          for(int j = 0; j<4 ;j++){
               for(int k = 0; k<4;k++){
                  if(blocks[random][rotation][j][k] == 1){
@@ -619,7 +632,23 @@ public class TetrisEx extends JFrame
             TP.repaint();
          }
       }
+      
+      
+      
+      /*
+       * 추가할 부분
+       * 스페이스바 입력시 블록을 바닥에 바로 붙이도록 함
+       */
+      void moveHardDrop()
+      {    	      	  
+    	  
+    	  //hgt -= ???
+    	  
+    	  TP.repaint();
+      }
    }
+   
+   
    
    class TetrisThread extends Thread
    {
