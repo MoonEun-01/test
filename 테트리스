@@ -1,4 +1,3 @@
-package Tetris;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -628,27 +627,37 @@ public class TetrisEx extends JFrame
       public void run()
       {
     	  /*
-    	   * 
     	   * 점수에 따라 블록이 떨어지는 속도가 빨라지도록 수정 
+    	   * 
+    	   * 기본 속도 1.3초
+    	   * 200점이상 800점 미만 1.0초
+    	   * 800점이상 3000점 미만 0.7초
+    	   * 그 이상 0.45초 
     	   */
          while(true)
          {
             try{
-            	if(score>=200)
+            	if((score*100) < 200) //초반 속도
             	{
-            		sleep(500);
+            		sleep(1300);
             		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
                         TP.down();
             	}
-            	else if(score>=500)
-            	{
-            		sleep(500);
-            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
-                        TP.down();
-            	}
-            	else
+            	else if((score*100)>=200 && (score*100) < 800)
             	{
             		sleep(1000);
+            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
+                        TP.down();
+            	}
+            	else if((score*100)>=800 && (score*100) < 3000)
+            	{
+            		sleep(700);
+            		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
+                        TP.down();
+            	}
+            	else	//3000점 이상
+            	{
+            		sleep(450);
             		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
                         TP.down();
             	}
