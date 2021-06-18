@@ -1,20 +1,23 @@
+package Tetris;	//Main은 패키지 다른곳에 있음. 이클립스에만 저장해둠
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class TetrisEx extends JFrame 
 {
-   Container c = getContentPane();
-   TetrisPanel TP = new TetrisPanel();
-   JDialog JD = new JDialog();
-   TetrisThread th;
+	
+   Container c = getContentPane();	//컨테이너 생성
+   TetrisPanel TP = new TetrisPanel();	//게임을 진행할 패널
+   JDialog JD = new JDialog();	//최종점수를 띄울 dialog
+   TetrisThread th;	//테트리스 스레드, 블록이 떨어지는 속도
    
    static int blocksize = 20;	//블록사이즈
    
    int End = 0;
    int random = 0;	//  랜던값 저장하여 사용할 변수
    int random2 = (int)(Math.random()*7);	//7가지모양의 블럭중 랜덤으로 생성
-   
+   int randomColor = 0, randomColor2 = 0; //블록 색상을 통일하기 위해 추가
    int score = 0; //점수 초기화
    
    int wid=100;	//가로
@@ -25,208 +28,215 @@ public class TetrisEx extends JFrame
    
    int curX[]= new int[4], curY[] = new int [4]; // 블록들의 좌표 저장
    
-   int blocks[][][][]  = 	//블록모양
-      {
-         {
-            //■
-            //■■■
-            {
-               {0,0,0,0},
-               {1,0,0,0},
-               {1,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,1,0},
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {1,1,1,0},
-               {0,0,1,0},
-               {0,0,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,1,0},
-               {0,0,1,0},
-               {0,1,1,0},
-               {0,0,0,0}
-            }
-         },
-         {
-
-               //  ■
-               //■■■
-            {
-               {0,0,0,0},
-               {0,0,1,0},
-               {1,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {1,1,1,0},
-               {1,0,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,1,0},
-               {0,0,1,0},
-               {0,0,1,0},
-               {0,0,0,0}
-            }
-         },
-         {
-               //  ■■
-               //  ■■
-            {
-               {0,0,0,0},
-               {1,1,0,0},
-               {1,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {1,1,0,0},
-               {1,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {1,1,0,0},
-               {1,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {1,1,0,0},
-               {1,1,0,0},
-               {0,0,0,0}
-            }
-         },
-         {
-               // ■■■■
-            {
-               {0,0,0,0},
-               {0,0,0,0},
-               {1,1,1,1},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,1,0,0}
-            },
-            {
-               {0,0,0,0},
-               {0,0,0,0},
-               {1,1,1,1},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,1,0,0},
-               {0,1,0,0}
-            }
-         },
-         {
-                //■
-               //■■■
-            {
-               {0,0,0,0},
-               {0,1,0,0},
-               {1,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {0,1,1,0},
-               {0,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {1,1,1,0},
-               {0,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {1,1,0,0},
-               {0,1,0,0},
-               {0,0,0,0}
-            }   
-         },
-         {
-                //   ■■
-                //  ■■
-            {
-               {0,0,0,0},
-               {0,0,1,1},
-               {0,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {0,1,0,0},
-               {0,1,1,0},
-               {0,0,1,0}
-            },
-            {
-               {0,0,0,0},
-               {0,1,1,0},
-               {1,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,1,0,0},
-               {0,1,1,0},
-               {0,0,1,0},
-               {0,0,0,0}
-            }
-         },
-         {
-                //  ■■
-                //   ■■
-            {
-               {0,0,0,0},
-               {1,1,0,0},
-               {0,1,1,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,1,0},
-               {0,1,1,0},
-               {0,1,0,0},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {0,1,1,0},
-               {0,0,1,1},
-               {0,0,0,0}
-            },
-            {
-               {0,0,0,0},
-               {0,0,1,0},
-               {0,1,1,0},
-               {0,1,0,0}
-            }   
-         }
-   };
+   int blocks[][][][]  = //int blocks[블록모양7][방향4][y][x]
+	      {
+	         {
+	            //■
+	            //■■■
+	            {
+	               {0,0,0,0},
+	               {1,0,0,0},
+	               {1,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,1,0},
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {1,1,1,0},
+	               {0,0,1,0},
+	               {0,0,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,1,0},
+	               {0,0,1,0},
+	               {0,1,1,0},
+	               {0,0,0,0}
+	            }
+	         },
+	         {
+	               //  ■
+	               //■■■
+	            {
+	               {0,0,0,0},
+	               {0,0,1,0},
+	               {1,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,1,0},
+	               {1,0,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,1,0},
+	               {0,0,1,0},
+	               {0,0,1,0},
+	               {0,0,0,0}
+	            }
+	         },
+	         {
+	               //  ■■
+	               //  ■■
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            }
+	         },
+	         {
+	               // ■■■■
+	            {
+	               {0,0,0,0},
+	               {0,0,0,0},
+	               {1,1,1,1},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,1,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {0,0,0,0},
+	               {1,1,1,1},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,1,0,0},
+	               {0,1,0,0}
+	            }
+	         },
+	         {
+	                //■
+	               //■■■
+	            {
+	               {0,0,0,0},
+	               {0,1,0,0},
+	               {1,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,1,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,1,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {1,1,0,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            }   
+	         },
+	         {
+	                //  ■■
+	                //   ■■
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {0,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,1,0},
+	               {0,1,1,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {1,1,0,0},
+	               {0,1,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,1,0},
+	               {0,1,1,0},
+	               {0,1,0,0},
+	               {0,0,0,0}
+	            }
+	         },
+	         {
+	                //  ■■
+	               //  ■■
+	            {
+	               {0,0,0,0},
+	               {0,1,1,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,1,0},
+	               {0,0,1,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,0,0,0},
+	               {0,1,1,0},
+	               {1,1,0,0},
+	               {0,0,0,0}
+	            },
+	            {
+	               {0,1,0,0},
+	               {0,1,1,0},
+	               {0,0,1,0},
+	               {0,0,0,0}
+	            }   
+	         }
+	   };
+   
    //전체는 세로 21 가로 12지만 블록이 움직이는 공간은 세로 19 가로 11
+   
+   /*
+    * 수정한 부분
+    * 맵 크기 수정 21*12에서 23*12로
+    */
    int[][] gameboard = {	//게임맵 
-		   			 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -245,48 +255,71 @@ public class TetrisEx extends JFrame
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},	// <-바닥에 닿았는지 확인하려고 맵 말고 윗한칸까지 1로 지정
                      {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
    JButton btn = new JButton("Replay?");	//JDialog로 뛰울 창에 넣을 재시작버튼
-   JLabel lbl = new JLabel();	//최종 점수 레이블
+   
+   /*
+    * 추가한 부분
+    * 
+    * 멈춤, 시작, 다시시작 버튼 추가
+    */
+   JButton btn_Stop = new JButton("Stop"); // stop버튼, 게임멈춤
+   JButton btn_Play = new JButton("Play"); // play버튼, 멈춘걸 다시 실행
+   
+   
+   JLabel lbl = new JLabel();	//점수 레이블
    JLabel lbl2 = new JLabel();	//게임 진행중 현재 점수 출력할 레이블
-      
-   TetrisEx(){
+   JLabel JumSooText = new JLabel(); //점수 뒤에 ~점이라고 적을 레이블 (추가)
+   
+   TetrisEx()
+   {
       setTitle("테트리스");
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프로세스종료
       setLayout(null);	//레이아웃 관리자를 사용하지 않음
-      TP.setSize(700,700);	//패널 사이즈 700*700
       
+      TP.setSize(700, 700);	//패널 사이즈 700*700
       add(TP);	//패널추가
       
       th = new TetrisThread();	//테트리스 스레드 생성
       
       // JDialog 
-      
-      JD.setTitle("최종점수");
-      JD.setSize(250,190);	//dialog창 크기 250*190
+      JD.setTitle("GameOver");	// 글자 변경 : 점수 -> 최종점수 -> GameOver
+      JD.setSize(240,190);	//dialog창 크기 240*190
       JD.setLayout(new FlowLayout(FlowLayout.CENTER, 150, 30));
       
       
       
       lbl.setFont(new Font("arial",Font.PLAIN,15));
-      lbl2.setText("점  수");	//게임진행될 때 오른쪽에다가 뛰울 점수 레이블
-      lbl2.setFont(new Font("나눔고딕",Font.PLAIN,15));
+      lbl2.setText("★ 현 재  점 수 ★");	//게임진행될 때 오른쪽에다가 뛰울 점수 레이블
+      lbl2.setFont(new Font("나눔고딕",Font.PLAIN,15));	//폰트는 나눔고딕, 크기 15
+      /* 
+       * 추가한 부분
+       * 글자 색상 변경 (검은배경에는 흰글씨로)
+       */ 
+      lbl2.setForeground(Color.WHITE);
       
       
-      TP.addKeyListener(new KeyAdapter(){
-            public void keyPressed(KeyEvent e){
-               int keyCode = e.getKeyCode();
-                        
-               if(keyCode == KeyEvent.VK_UP)
+      TP.addKeyListener(new KeyAdapter()	//이동키 입력 이벤트리스너
+      {
+            public void keyPressed(KeyEvent e){	
+               int keyCode = e.getKeyCode();	//조작키 입력받음
+                      
+               /*
+                * 수정한 부분
+                * 기존 : 화살표 방향키만 입력
+                * 수정 : 화살표 방향키 + WASD 추가
+                */
+               if(keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)	//윗 방향키 눌렀을 때
                   TP.moveUp();
-               if(keyCode == KeyEvent.VK_DOWN)
+               if(keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)	//아래 방향키 눌렀을 때
                   TP.moveDown();
-               if(keyCode == KeyEvent.VK_LEFT)
+               if(keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)	//왼쪽 방향키 눌렀을 때
                   TP.moveLeft();
-               if(keyCode == KeyEvent.VK_RIGHT)
+               if(keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D)	//오른쪽 방향키 눌렀을 때
                   TP.moveRight();
+               
                /*
                 * 추가한 부분
                 * 스페이스바를 눌렀을 경우
@@ -300,10 +333,12 @@ public class TetrisEx extends JFrame
             }
          });
       
-      btn.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e){
+      btn.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
             limit = false;
-            for(int y=0; y<19;y++)
+            for(int y=0; y<21;y++)
                for(int x=1; x<12; x++)
                   gameboard[y][x] =0 ;
             score =0;
@@ -311,22 +346,47 @@ public class TetrisEx extends JFrame
          }
       });
       
+      
       /*
+       * 추가한 부분
+       */
+      btn_Stop.addActionListener(new ActionListener()	//게임 멈춤
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            
+         }
+      });
+      
+      btn_Play.addActionListener(new ActionListener()	//게임 멈춘거 다시 진행
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            
+         }
+      });
+      
+
+      
+      
+      
+      
+      /*
+       * 수정한 부분
        * 백그라운드 색상 흰색에서 검정으로 수정
        * TP.setBackground(Color.WHITE); -> TP.setBackground(Color.BLACK);
-       * 흰색은 너무 밝고 처음 블록색이 노란색인데 노란색은 검정이랑 있을 때 더욱 눈에 띔!
+       * 흰 배경은 너무 밝아서 눈 아픔
        */
       TP.setBackground(Color.BLACK);
-      setSize(530,520);	//TP 530*520
+      setSize(530, 580);	//TP 530*580
       setVisible(true);
 
 
       // 화면 중앙 정렬
-      Dimension frameSize = this.getSize();
-      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      setLocation((screenSize.width - frameSize.width)/2, (screenSize.height - frameSize.height)/2);
-      JD.setLocation((screenSize.width - frameSize.width)/2 + 220, (screenSize.height - frameSize.height)/2 +220);
-      
+      Dimension frameSize = this.getSize();	//디맨션객체에 윈도우창의 사이즈를 받아온다
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();	//디멘션객체에 모니터 해상도를 받아온다
+      setLocation((screenSize.width - frameSize.width)/2, (screenSize.height - frameSize.height)/2);	//프로그램이 시작되면 윈도우를 화면 정 가운데에 표시한다
+      JD.setLocation((screenSize.width - frameSize.width)/2 + 220, (screenSize.height - frameSize.height)/2 +220); //다이아로그도 정가운데에서 +220에 위치하도록한다
       
       TP.requestFocus(true);
       th.start();
@@ -336,24 +396,111 @@ public class TetrisEx extends JFrame
    
    class TetrisPanel extends JPanel
    {
-      public void paintComponent(Graphics g){
+      public void paintComponent(Graphics g)
+      {
          
-         int cnt = 0 , cnt2 = 0;
-         TP.requestFocus(true);
-         super.paintComponent(g);
+         int cnt = 0 , cnt2 = 0;	//바닥에 닿았는지 카운트 하기 위한 변수
+        
+         TP.requestFocus(true);		//setFocusavle이 true로 설정된 컴포넌트가 포커스를 달라고 요청.
+         
+         super.paintComponent(g);	//패널의 배경색을 지정할 수 있는 메소드
+         							//drawRext(x,y,w,h), drawOval(x,y,w,h), fillRect, fillOval 등이 있음
+         							//해당 소스코드에서는 3차원 사각형씀(벽면디자인(draw), 블록(fill))
+         
+         lbl2.setLocation(340,120);	//"점수"글자 레이블 위치
+         							//(353,120)에서 (340, 120)으로 수정
+         TP.add(lbl2);	//"점수" 글자 레이블을 패널에 붙임
+         
+         lbl.setLocation(370,150);	// score*100 글자 레이블 위치
+         							//(365, 150)에서 (370,150)으로 수정
+         lbl.setForeground(Color.WHITE);	//글자색 검정으로(추가)
+         TP.add(lbl);	//score레이블 패널에 붙임
+         lbl.setText(Integer.toString(score*100));	//점수에 100곱해서 100단위로 점수 계산하게 함
          
          
-         lbl2.setLocation(353,120);
-         TP.add(lbl2);
+         /*
+          * 점 글자 레이블 추가
+          * 
+          * 21.06.08 오류 발생
+          * TP에 레이블 추가하는건데
+          * 게임 종료 후 JD가 깜빡깜빡거리는 에러가 발생
+          * 아래 소스코드를 넣으니 깜빡깜빡거리고 안 넣으면 문제가 발생하지 않음
+          */
+         /*
+         JumSooText.setText("     점");	//score뒤에 '점' 붙임
+         JumSooText.setLocation(400, 150);
+         JumSooText.setForeground(Color.WHITE);
+         JumSooText.setFont(new Font("나눔고딕",Font.PLAIN,14));
+         TP.add(JumSooText);	//'점'글자 레이블 패널에 붙임
+         */
          
-         lbl.setLocation(360,145);
-         TP.add(lbl);
-         lbl.setText(Integer.toString(score*100));
          
-         g.setColor(Color.ORANGE); // (떨어지는 블럭+ 미리보기 블럭) 색깔
+         //g.setColor(Color.ORANGE);
          
-         // 다음 나올 도형 출력
-         blockLookAhead(g);
+         /*
+          * 추가한부분
+          * 블록들의 색상 랜덤으로 결정하여 출력
+          */
+         
+         /*randomColor2 = random2;
+         random2 = randomColor;   //nextblock color 저장   
+         randomColor = randomColor2;
+         */
+         
+         switch(random2)	//블록의 색상
+         {
+         case 0:
+        	 	g.setColor(Color.RED);
+        	 	break;
+         case 1:
+         	g.setColor(Color.ORANGE);
+         	break;
+         case 2:
+         	g.setColor(Color.YELLOW);
+         	break;
+         case 3:
+         	g.setColor(Color.GREEN);
+         	break;
+         case 4:
+           	g.setColor(Color.BLUE);
+           	break;
+         case 5:
+           	g.setColor(Color.PINK);
+           	break;
+         case 6:
+           	g.setColor(Color.WHITE);
+           	break;
+         }
+           
+         //random2 = (int)(Math.random()*7);
+         
+         blockLookAhead(g);	// NextBlock 출력
+         
+         /*switch(randomColor)	//떨어지는 블록의 색상
+         {
+         case 0:
+        	 	g.setColor(Color.RED);
+        	 	break;
+         case 1:
+         	g.setColor(Color.ORANGE);
+         	break;
+         case 2:
+         	g.setColor(Color.YELLOW);
+         	break;
+         case 3:
+         	g.setColor(Color.GREEN);
+         	break;
+         case 4:
+           	g.setColor(Color.BLUE);
+           	break;
+         case 5:
+           	g.setColor(Color.PINK);
+           	break;
+         case 6:
+           	g.setColor(Color.WHITE);
+           	break;
+         }*/
+         
          
          // 벽이 천장에 닿으면 게임 오버
          gameOverCheck();
@@ -377,41 +524,62 @@ public class TetrisEx extends JFrame
          }
       }
       
-      public void blockLookAhead(Graphics g){
-         for(int a = 0; a<4 ;a++){
-              for(int b = 0; b<4;b++){
-                 if(blocks[random2][0][a][b] == 1){
+      public void blockLookAhead(Graphics g)	// Next Block 미리 보여줌
+      {	
+         for(int a = 0; a<4 ;a++)
+         {
+              for(int b = 0; b<4;b++)
+              {
+                 if(blocks[random2][0][a][b] == 1)
+                 {
+                	 //블록 디자인은 3D형식을 사용
+                	 // C언어에서는 ■를 사용하여 블록을 표시했는데
+                	 // 자바에서는 GUI - fill3DRect를 이용하여 블록을 표현함
                     g.fill3DRect(b*blocksize+120, a*blocksize, blocksize, blocksize, true);
+                    //x,y,w,h,볼록(t)/오목(f)
                  }
               }
           }
       }
       
-      public void gameOverCheck(){
-         for(int x=1;x<12;x++)
-             if(gameboard[2][x]==1){
-                limit = true;
+      public void gameOverCheck()	//블록이 천장에 닿았는가
+      {
+         for(int x=1; x<12; x++)
+         {
+             if(gameboard[2][x]==1)	//블록이 천장에 닿았을 경우
+             {
+                limit = true;	//벽 충돌 -> true
                 
                
                 //lbl.setLocation(50,50);
+                
+                lbl.setForeground(Color.BLACK);	//글자색 검정으로(추가)
+                								//패널에서 쓰던 점수레이블을 다이어로그에 붙임
                 JD.add(lbl);	//JDialog에 최종 점수 글자 레이블 붙임
                 JD.add(btn);	//JDialog에 replay?버튼 붙임
                
                 //btn.setLocation(50,30);
-                JD.setVisible(true);
+                JD.setVisible(true);	//보이도록 설정
              }
+         }
       }
       
-      public void removeBlock(int cnt, int cnt2, Graphics g){	
-         for(int y =0;y<19;y++){
-             for(int x =1; x<12 ; x++){
-                if(gameboard[y][x] == 1){
+      public void removeBlock(int cnt, int cnt2, Graphics g)
+      {	
+         for(int y =0;y<21;y++)
+         {
+             for(int x =1; x<12 ; x++)
+             {
+                if(gameboard[y][x] == 1)
+                {
                    cnt2++;	//블록이 바닥에 닿았을 경우 +1을 함
                 }
              }
-             if(cnt2 == 11){	//맵에서 블록이 움직일 수 있는 공간은 가로 11이므로 cnt가 11이 되면 한줄 채운것임
+             if(cnt2 == 11)//맵에서 블록이 움직일 수 있는 공간은 가로 11이므로 cnt가 11이 되면 한줄 채운것임
+             {	
                 for(int i=y;i>1;i--)
-                   for(int j=1;j<13;j++){
+                   for(int j=1;j<13;j++)
+                   {
                       gameboard[i][j] = 0;	//채운 줄은 0으로 초기화 하고
                       gameboard[i][j] = gameboard[i-1][j];	//그 윗줄[i-1]은 아래로 한칸씩 내림
                    }
@@ -423,22 +591,33 @@ public class TetrisEx extends JFrame
           }
       }
       
-      public void makeBlock(Graphics g){	//생성 블록
-         g.setColor(Color.GRAY); 
-          for(int y=0; y<19;y++){
-             for(int x=1; x<12; x++){
-                if(gameboard[y][x]== 1){
+      public void makeBlock(Graphics g) //떨어진 블록 벽으로 고정
+      {
+         g.setColor(Color.GRAY);	//색상은 회색으로 해서 돌 느낌이 나도록 함
+         
+          for(int y=0; y<21;y++)
+          {
+             for(int x=1; x<12; x++)
+             {
+                if(gameboard[y][x]== 1)	//게임보드가 1인경우(블록으로 채워진 경우)
+                {
                    g.fill3DRect( x*blocksize+20, y*blocksize+60, blocksize, blocksize, true);
                 }
              }
           }
       }
       
-      public void blockDown(int cnt, Graphics g){	//자동으로 블록이 아래로 떨어짐
-         for(int j = 0; j<4 ;j++){
-              for(int k = 0; k<4;k++){
-                 if(blocks[random][rotation][j][k] == 1){
-                    curX[cnt] = ((k*blocksize)+wid)/blocksize; curY[cnt] = ((j*blocksize)+hgt)/blocksize;//curX,Y[0][1][2][3]에 좌표 4개 저장
+      public void blockDown(int cnt, Graphics g) //자동으로 블록이 아래로 떨어짐
+      {	
+         for(int j = 0; j<4 ;j++)
+         {
+              for(int k = 0; k<4;k++)
+              {
+                 if(blocks[random][rotation][j][k] == 1)
+                 {
+                    curX[cnt] = ((k*blocksize)+wid)/blocksize;
+                    curY[cnt] = ((j*blocksize)+hgt)/blocksize;//curX,Y[0][1][2][3]에 좌표 4개 저장
+                    
                     g.fill3DRect(curX[cnt]*blocksize+20, curY[cnt]*blocksize+60, blocksize, blocksize, true);
                     
                     cnt ++;
@@ -450,12 +629,13 @@ public class TetrisEx extends JFrame
       
       // 떨어지던 블록이 벽이 되는지 검사
       // 벽이 되면 wid=120, hgt=0 으로 블록 초기화, rotation도 초기화 
-      public void blockToWall(){
+      public void blockToWall()
+      {
          try{
          for(int z = 0; z<4 ; z++)
               if(gameboard[curY[z]+1][curX[z]] == 1)
-                    for (int j= 0; j<4;j++){
-                      
+                    for (int j= 0; j<4;j++)
+                    {
                           gameboard[curY[j]][curX[j]] = 1;
                           wid =100; 
                           hgt =0;
@@ -463,7 +643,7 @@ public class TetrisEx extends JFrame
                           rotation = 0;
                           random = random2;
                     }
-         }catch(ArrayIndexOutOfBoundsException e){ System.out.println("Error");
+         }catch(ArrayIndexOutOfBoundsException e){ System.out.println("Error");	//ArrayIndexOutOfBoundsException : 배열의크기보다 큰 인덱스를 사용하면 발생
          for(int i=0; i<4 ; i++)
                System.out.print("("+curY[i]+","+curX[i]+")");
             System.out.println();}
@@ -490,16 +670,43 @@ public class TetrisEx extends JFrame
          return 0; // 충돌하지 않으면 0반환
       }
       
+      /*
+       * 추가한 부분
+       * 위쪽 벽에 충돌하면 못 움직이도록 함
+       */
+      public int collision_UP()
+      {
+    	  for(int i=0; i<4; i++)
+    	  {
+    		  /*
+    		   * 21.06.18
+    		   * if(gameboard[curY[i]-1][curX[i]] == 1)을 하면 벽을 뚫고 회전이 한번만 되다가
+    		   * 한칸 아래로 내려가면 회전이 가능하고
+    		   * 
+    		   * if(gameboard[curY[i]-2][curX[i]] == 1)를 하면 벽을 뚫지는 않는데
+    		   * 한칸 아래로 내려가면 회전이 한번만 가능하고
+    		   * 한칸 더 아래로 내려가면 회전이 계속 가능함
+    		   */
+    		  if(gameboard[curY[i]][curX[i]]==1)	//블록이 천장에 닿았을 경우
+                  return 1; // 충돌시 1반환
+            }
+            return 0; // 충돌하지 않으면 0반환
+      }
+      
       // curX,Y에 다음 회전 도형의 절대좌표를 모두 기록해두고, 만약 오른쪽이나 왼쪽 X좌표1,2칸 안에 벽이 있으면 그만큼 오른쪽 혹은 왼쪽으로 밀어서 배치
-      public void rotationCheck(){
+      public void rotationCheck()
+      {
        // curX,Y에 다음 회전 도형의 절대좌표를 모두 기록해두고, 밑에 구문에서 그 절대좌표의 값이 벽에 닿는지 판단
          int cnt2=0;
-          for(int j = 0; j<4 ;j++){
-              for(int k = 0; k<4;k++){
-                 int rotation2 = (rotation%4)+1 ;
-                 if(rotation2 == 4)
+          for(int j = 0; j<4 ;j++)
+          {
+              for(int k = 0; k<4;k++)
+              {
+                 int rotation2 = (rotation%4)+1 ; //1~4범위의 랜덤수 생성
+                 if(rotation2 == 4)	//랜덤수가 4일 경우 0으로 지정하여 실질적으로 사용하는 수는 0~3이다.
                     rotation2 = 0;
-                 if(blocks[random][rotation2][j][k] == 1){
+                 if(blocks[random][rotation2][j][k] == 1)
+                 {
                     curX[cnt2] = ((k*blocksize)+wid)/blocksize; curY[cnt2] = ((j*blocksize)+hgt)/blocksize;
                     cnt2++;
                  }    
@@ -508,16 +715,18 @@ public class TetrisEx extends JFrame
           
        // curX,Y에 저장된 좌표를 이용
           int chk = 0;
-          int blank =0;
+          int blank = 0;
           int error = 0;
            // 왼쪽 벽
              
                 
-                      if(gameboard[curY[0]][curX[0]] == 1 || (random == 6 && gameboard[curY[2]][curX[2]] == 1) || (random == 1 && gameboard[curY[1]][curX[1]] ==1 )){
+                      if(gameboard[curY[0]][curX[0]] == 1 || (random == 6 && gameboard[curY[2]][curX[2]] == 1) || (random == 1 && gameboard[curY[1]][curX[1]] ==1 ))
+                      {
                          chk = 1; // 만약 다음 회전한 도형의 위치가 벽과 겹친다면 chk=1로 표시함           
                          error++;
                          System.out.println("chk1");
-                         if(random == 3){ // 일자막대의 경우 회전할 여유가 있는 공백이 없으면 회전막음
+                         if(random == 3)
+                         { // 일자막대의 경우 회전할 여유가 있는 공백이 없으면 회전막음
                             for(int i=1;i<5;i++)
                                if(gameboard[curY[0]][curX[0]+i] == 0)
                                   blank++;
@@ -525,7 +734,9 @@ public class TetrisEx extends JFrame
                                chk = 4;
                             
                               System.out.println(blank);
-                         }else{ // 그 외의 경우 회전할 여유가 없는 공백이 없으면 회전 막음
+                         }
+                         else
+                         { // 그 외의 경우 회전할 여유가 없는 공백이 없으면 회전 막음
                             for(int i=1; i<4;i++)
                                if(gameboard[curY[0]][curX[0]+i] == 0)
                                   blank++;
@@ -576,17 +787,25 @@ public class TetrisEx extends JFrame
              wid += blocksize;
              rotation++;
              rotation = rotation%4;
-            }else if (chk ==2){
+            }
+          else if (chk ==2)
+          {
                wid -= blocksize*2;
                rotation++;
                rotation = rotation%4;
-            }else if (chk ==3){
+            }
+          else if (chk ==3)
+          {
                wid -= blocksize;
                rotation++;
                rotation = rotation%4;
-            }else if(chk == 4){
+            }
+          else if(chk == 4)
+          {
                System.out.println("ban");
-            }else{
+            }
+          else
+          {
                rotation++;
                 rotation = rotation%4;
             }
@@ -596,42 +815,66 @@ public class TetrisEx extends JFrame
       
       public void makeBorder(Graphics g)
       {
-         g.setColor(Color.GRAY);
+    	  //g.setColor(Color.GRAY); 에서 수정
+    	  
+    	  //g.setColor(Color.DARK_GRAY); 이걸로 할까
+    	  g.setColor(Color.WHITE);
+    	  
+         //draw3DRect(int x, int y, int width, int height, boolean raised) : 좌표(x, y)에서 크기(width, height)만큼 raised에 따라 오목하게 또는 볼록하게 사각형을 그린다.
+         //True:입체(볼록) False:입체(오목)
          
-         g.draw3DRect(28, 70, 5, 375,true); // 기둥
-         g.draw3DRect(265, 70, 5, 375, true); // 기둥
-         g.draw3DRect(15, 445, 270, 5,true); // 바닥
+         /*
+          * 21.06.18 맵크기 수정하고 Border도 사이즈 교체
+          * 
+          *     g.draw3DRect(28, 70, 5, 365,true); // 기둥
+          *     g.draw3DRect(265, 70, 5, 365, true); // 기둥
+          * 
+          */
+         
+         g.draw3DRect(28, 70, 5, 415, true); // 기둥
+         g.draw3DRect(265, 70, 5, 415, true); // 기둥
+         
+         g.draw3DRect(15, 485, 270, 5, true); // 바닥
          g.draw3DRect(15, 65, 270, 5, true); // 천장
       }
       
       void down()
       {
          hgt +=blocksize;
-         TP.repaint();
+         TP.repaint();	//새로그림
       }
-      void moveUp(){
+      void moveUp()
+      {
+         int sel = collision_UP();//추가
+         
          rotationCheck();
-          if(limit == false)
-             repaint();
+         if(sel == 0 && limit == false)	// if(limit == false)에서 수정
+             repaint();//새로그림
       }
-      void moveDown(){
-         if(limit == false){
+      void moveDown()
+      {
+         if(limit == false)
+         {
             hgt += blocksize;
-            TP.repaint();
+            TP.repaint();//새로그림
          }
       }
-      void moveLeft(){
+      void moveLeft()
+      {
          int sel = collision_LEFT();// sel이 1이면 충돌, 0이면 충돌X
-         if(sel == 0 && limit == false){
+         if(sel == 0 && limit == false)
+         {
             wid -= blocksize;
-               TP.repaint();
+            TP.repaint(); //새로그림
          }
       }
-      void moveRight(){
+      void moveRight()
+      {
          int sel = collision_RIGHT();// sel이 1이면 충돌, 0이면 충돌X
-         if(sel == 0 && limit == false){ 
+         if(sel == 0 && limit == false)
+         { 
             wid += blocksize;
-            TP.repaint();
+            TP.repaint(); //새로그림
          }
       }
       
@@ -640,13 +883,42 @@ public class TetrisEx extends JFrame
       /*
        * 추가할 부분
        * 스페이스바 입력시 블록을 바닥에 바로 붙이도록 함
+       * 
+       * 오류발생 21.06.13
+       * while문을 사용하면 패널이 멈추고 더이상 진행을 하지 않음(그냥 정지된것같음)
+       * 이클립스를 종료해도 계속 창이 떠있다가 한참뒤에 꺼지는 거 보면 while이 무한 반복되면서 오류가 생기는것음 
+       * 
+       * 
+       * 오류발생 21.06.17
+       * for문을 사용하면 아래로 빨리 내려갈 수 는 있는데(바로 내려가는건 X)
+       * 만약 바닥을 두칸 띄운상태에서 스페이스바를 누르면 맵 밖으로 나가는 부분이 생김
+       * 나간 부분은 지워지고 나가지 않은 부분만 0->1로 되어서 바닥에 고정됨
        */
       void moveHardDrop()
-      {    	      	  
+      {       	  
+    	  /*
+    	  while(true)
+    	  {
+    		  if(limit == false)
+    		  {
+    			  hgt+=blocksize;
+    		  }
+    		  else
+    		  {
+    			  break;
+    		  }
+    	  }*/
     	  
-    	  //hgt -= ???
+    	  for(int z = 0; z<4 ; z++)
+    	  {
+              if(gameboard[curY[z]+1][curX[z]] == 0)	//벽이 아닌경우에만
+              {
+                    hgt += blocksize;					
+              }
+    	  }
     	  
-    	  TP.repaint();
+    	  
+    	  TP.repaint();	//새로그림
       }
    }
    
@@ -658,12 +930,13 @@ public class TetrisEx extends JFrame
       public void run()
       {
     	  /*
+    	   * 추가한 부분
     	   * 점수에 따라 블록이 떨어지는 속도가 빨라지도록 수정 
     	   * 
     	   * 기본 속도 1.3초
     	   * 200점이상 800점 미만 1.0초
-    	   * 800점이상 3000점 미만 0.7초
-    	   * 그 이상 0.45초 
+    	   * 800점이상 3000점 미만 0.65초
+    	   * 그 이상 0.3초 
     	   */
          while(true)
          {
@@ -682,13 +955,13 @@ public class TetrisEx extends JFrame
             	}
             	else if((score*100)>=800 && (score*100) < 3000)
             	{
-            		sleep(700);
+            		sleep(650);
             		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
                         TP.down();
             	}
             	else	//3000점 이상
             	{
-            		sleep(450);
+            		sleep(300);
             		if(limit == false) // limit이 false일 경우에만 작동. true가 되면 테트리스 작동중지
                         TP.down();
             	}
@@ -700,12 +973,4 @@ public class TetrisEx extends JFrame
          }
       }
    }
-}
-
-public class Main
-{
-	public static void main(String[] args)
-	   {
-	      new TetrisEx();
-	   }
 }
