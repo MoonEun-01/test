@@ -1,5 +1,4 @@
-package Tetris;	//Main은 패키지 다른곳에 있음. 이클립스에만 저장해둠
-
+package Tetris;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -234,6 +233,7 @@ public class TetrisEx extends JFrame
     * 맵 크기 수정 21*12에서 23*12로
     */
    int[][] gameboard = {	//게임맵 
+		   			 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		     		 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -255,7 +255,6 @@ public class TetrisEx extends JFrame
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},	// <-바닥에 닿았는지 확인하려고 맵 말고 윗한칸까지 1로 지정
                      {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
    JButton btn = new JButton("Replay?");	//JDialog로 뛰울 창에 넣을 재시작버튼
@@ -338,7 +337,7 @@ public class TetrisEx extends JFrame
          public void actionPerformed(ActionEvent e)
          {
             limit = false;
-            for(int y=0; y<21;y++)
+            for(int y=1; y<22;y++)	///여기 y=0이었음
                for(int x=1; x<12; x++)
                   gameboard[y][x] =0 ;
             score =0;
@@ -566,7 +565,7 @@ public class TetrisEx extends JFrame
       
       public void removeBlock(int cnt, int cnt2, Graphics g)
       {	
-         for(int y =0;y<21;y++)
+         for(int y = 1;y<22;y++)
          {
              for(int x =1; x<12 ; x++)
              {
@@ -595,7 +594,7 @@ public class TetrisEx extends JFrame
       {
          g.setColor(Color.GRAY);	//색상은 회색으로 해서 돌 느낌이 나도록 함
          
-          for(int y=0; y<21;y++)
+          for(int y=1; y<22;y++)
           {
              for(int x=1; x<12; x++)
              {
@@ -813,7 +812,7 @@ public class TetrisEx extends JFrame
           
       }
       
-      public void makeBorder(Graphics g)
+      public void makeBorder(Graphics g)	//맵
       {
     	  //g.setColor(Color.GRAY); 에서 수정
     	  
@@ -826,15 +825,16 @@ public class TetrisEx extends JFrame
          /*
           * 21.06.18 맵크기 수정하고 Border도 사이즈 교체
           * 
+          * 기존 : 
           *     g.draw3DRect(28, 70, 5, 365,true); // 기둥
           *     g.draw3DRect(265, 70, 5, 365, true); // 기둥
           * 
           */
          
-         g.draw3DRect(28, 70, 5, 415, true); // 기둥
-         g.draw3DRect(265, 70, 5, 415, true); // 기둥
+         g.draw3DRect(28, 70, 5, 430 , true); // 기둥
+         g.draw3DRect(265, 70, 5, 430, true); // 기둥
          
-         g.draw3DRect(15, 485, 270, 5, true); // 바닥
+         g.draw3DRect(15, 500, 270, 5, true); // 바닥
          g.draw3DRect(15, 65, 270, 5, true); // 천장
       }
       
